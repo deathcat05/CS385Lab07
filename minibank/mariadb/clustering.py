@@ -72,17 +72,23 @@ def main():
     lock = zk.Lock(LOCK)
     try:
         lock.acquire()
+
         if zk.exists(CLUSTER_NODES):
+            print("Not first node")
+            start_nodes(CLUSTER_NODES)
             wait_until_primary()
-            result = zk.get(CLUSTER_NODES)[0].decode().split(",")
-            zk.set(CLUSTER_NODES, '{},{}'.format(result, get_ip_address()).encode())
+            result = zk.get(CLUSTER_NODES)[0].decode().split()
+            zk.set(CLUSTER_NODES, '{}{}'.format(result, get_ip_address()).encode())
             len(','.join(result))
 
+
         else:
+            print ("First node")
             bootstrap_cluster()
-            wait_until_primary()
-            zk.create(CLUSTER_NODES)
-            ipaddress = get_ip_address()
+            #ipaddress = zk.get(CLUSTER_NODES)[0].decode().split()
+            zk.set(CLUSTER_NODES, get_ip_address()).encode())
+
+
 
             
     finally: 

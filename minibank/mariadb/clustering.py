@@ -76,8 +76,10 @@ def main():
         if zk.exists(CLUSTER_NODES):
             print("Not first node")
             start_nodes(CLUSTER_NODES)
-            wait_until_primary()
+            #wait_until_primary()
             result = zk.get(CLUSTER_NODES)[0].decode().split()
+            start_nodes(result)
+            wait_until_primary()
             zk.set(CLUSTER_NODES, '{}{}'.format(result, get_ip_address()).encode())
             len(','.join(result))
 
